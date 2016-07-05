@@ -30,6 +30,7 @@ import java.io.IOException;
  * 4.Setup Listeners for Capture
  * 5.Capture and Save Files
  * 6.Release the Camera
+ * by zhangll 2016.7.5 update
  */
 public class CameraActivity extends ActionBarActivity {
     private static final String TAG = "CameraActivity";
