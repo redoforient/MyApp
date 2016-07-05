@@ -104,9 +104,10 @@ public class CameraActivity extends ActionBarActivity {
                 Log.d(TAG, "Error creating media file, check storage permissions: ");
                 return;
             }
+
             //转化为BitMap
             Bitmap bitmapPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
-            Bitmap rotateBitmap = ImageFileUtils.rotateBitmap(bitmapPicture, -90);
+            Bitmap rotateBitmap = ImageFileUtils.rotateBitmap(bitmapPicture, -90);//将图片逆时针旋转90度
             ivBitMap.setImageBitmap(rotateBitmap);
 
             try {
