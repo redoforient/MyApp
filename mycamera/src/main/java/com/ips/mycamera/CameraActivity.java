@@ -107,12 +107,9 @@ public class CameraActivity extends ActionBarActivity {
             //转化为BitMap
             Bitmap bitmapPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
             Bitmap rotateBitmap = ImageFileUtils.rotateBitmap(bitmapPicture, -90);
-
             ivBitMap.setImageBitmap(rotateBitmap);
 
-            try
-
-            {
+            try {
                 FileOutputStream fos = new FileOutputStream(mPhotoFile);
                 fos.write(data);
                 fos.close();
@@ -125,25 +122,18 @@ public class CameraActivity extends ActionBarActivity {
                     mediaScanIntent.setData(contentUri);
                     CameraActivity.this.sendBroadcast(mediaScanIntent);
                 } else {
-                    File storDir = Environment.getExternalStorageDirectory();
-                    Uri fileUri = Uri.parse("file://" + storDir);
+                    File fileDir = Environment.getExternalStorageDirectory();
+                    Uri fileUri = Uri.parse("file://" + fileDir);
                     Intent mediaMounted = new Intent(Intent.ACTION_MEDIA_MOUNTED, fileUri);
                     sendBroadcast(mediaMounted);
                 }
-            } catch (
-                    FileNotFoundException e
-                    )
-
-            {
+            } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (
-                    IOException e
-                    )
-
-            {
+            } catch (IOException e) {
                 Log.d(TAG, "Error accessing file: " + e.getMessage());
             }
 
+            //拍照后允许继续进行preview与拍照
             mCamera.startPreview();
         }
     };
