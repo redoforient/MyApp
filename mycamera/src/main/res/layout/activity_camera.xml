@@ -1,0 +1,35 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.ips.mycamera.CameraActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/camera_preview"
+            android:layout_width="300dp"
+            android:layout_height="400dp" />
+
+        <Button
+            android:id="@+id/btn_camera_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/camera_preview"
+            android:onClick="onCaptureClicked"
+            android:text="Photo Capture" />
+
+        <ImageView
+            android:id="@+id/iv_bitmap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_camera_capture"
+            android:layout_gravity="left|bottom" />
+    </RelativeLayout>
+</ScrollView>
