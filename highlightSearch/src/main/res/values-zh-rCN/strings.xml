@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">高亮显示搜索</string>
+    <string name="title_activity_main">时区搜索</string>
+    <string name="search">搜索城市</string>
+</resources>

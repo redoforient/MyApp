@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HighlightSearch</string>
+    <string name="title_activity_main">timezone search</string>
+    <string name="search">Search city</string>
+</resources>

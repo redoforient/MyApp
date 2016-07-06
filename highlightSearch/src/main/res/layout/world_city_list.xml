@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:background="#222222"
+        android:paddingLeft="20dip"
+        android:paddingRight="20dip">
+
+        <EditText
+            android:id="@+id/search_box"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="-3dp"
+            android:background="@drawable/textfield_search_default_holo_dark"
+            android:inputType="text"
+            android:paddingLeft="10dp"
+            android:textColor="#aaaaaa"
+            android:textSize="15pt" />
+        <TextView
+            android:id="@+id/hint"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="-2dp"
+            android:gravity="center_vertical"
+            android:text="@string/search"
+            android:drawableLeft="@drawable/ic_menu_search_holo_dark"
+            android:paddingLeft="10dp"
+            android:textColor="#c1c1c1"
+            android:textSize="15pt" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#33b5e5" />
+
+    <!-- Set height to 0, and let the weight param expand it -->
+    <!--
+         Note the use of the default ID! This lets us use a
+         ListActivity still!
+    -->
+
+
+    <!--<TextView
+        android:id="@+id/currentcity"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:paddingLeft="20dp"
+        android:background="?android:attr/listChoiceBackgroundIndicator"
+        android:drawableLeft="@drawable/add_clip_big"
+        android:drawablePadding="15dp"
+        android:gravity="center_vertical"
+        android:text="@string/add_current_city"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+
+<View
+    android:layout_width="fill_parent"
+    android:layout_height="1dp"
+    android:background="#929292" />-->
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" />
+
+</LinearLayout>
