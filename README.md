@@ -27,6 +27,10 @@ highlightSearch：关键字高亮显示搜索
 
 ![image](https://github.com/redoforient/MyApp/raw/master/highlightSearch/highLighKeySearch.gif)
 
-mycamera：前置摄像头拍照截取图片(有个bug，调用前置摄像头图片反了，之后我再解决吧2019.1.18)
+mycamera：前置摄像头拍照截取图片
+
+(有两个bug：
+1、该应用在Android5.1运行正常，Android7.0不行
+2、调用前置摄像头图片反了，之后我再解决吧2019.1.18)
 
 ![image](https://github.com/redoforient/MyApp/raw/master/mycamera/mycamera.gif)
