@@ -34,4 +34,4 @@ mycamera：前置摄像头拍照截取图片
 
 ![image](https://github.com/redoforient/MyApp/raw/master/mycamera/mycamera.gif)
 
-get more informaiton,add my wechat code:wx_zhangll
+get more informaiton,add my wechat ID:wx_zhangll
