@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/camera_preview"
             android:onClick="onCaptureClicked"
-            android:text="Photo Capture" />
+            android:text="拍照截图" />
 
         <ImageView
             android:id="@+id/iv_bitmap"

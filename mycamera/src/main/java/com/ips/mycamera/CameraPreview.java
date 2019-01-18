@@ -14,7 +14,9 @@ import android.view.SurfaceView;
 import java.io.IOException;
 
 /**
- * A basic Camera preview class
+ * @desc A basic Camera preview class
+ * @author zhangll
+ * create at 2019/1/18 20:06
  */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private final static String TAG = "CameraPreview";
@@ -35,6 +37,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
@@ -51,7 +54,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 // For Android 2.2 and above
                 mCamera.setDisplayOrientation(0);
                 // Uncomment for Android 2.0 and above
-
             }
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
@@ -60,6 +62,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         // empty. Take care of releasing the Camera preview in your activity.
         //this.getHolder().removeCallback(this);
@@ -68,6 +71,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         //mCamera = null;
     }
 
+    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         // If your preview can change or rotate, take care of those events here.
         // Make sure to stop the preview before resizing or reformatting it.

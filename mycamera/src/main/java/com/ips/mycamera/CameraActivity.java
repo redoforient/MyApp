@@ -51,13 +51,32 @@ public class CameraActivity extends ActionBarActivity {
         if (checkCameraHardware(this)) {
 
             // Create an instance of Camera
-            mCamera = CameraUtils.getCameraInstance(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            //mCamera = CameraUtils.getCameraInstance(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            mCamera = CameraUtils.getCameraInstance(findFrontFacingCamera());
 
             // Create our Preview view and set it as the content of our activity.
             mPreview = new CameraPreview(this, mCamera);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
         }
+    }
+
+
+    private int findFrontFacingCamera() {
+        int cameraId = 0;
+        boolean cameraFront = false;
+        // Search for the front facing camera
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                cameraId = i;
+                cameraFront = true;
+                break;
+            }
+        }
+        return cameraId;
     }
 
     /**
@@ -89,6 +108,7 @@ public class CameraActivity extends ActionBarActivity {
 
 
     Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
+        @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             Log.d(TAG, "onPictureTaken - raw");
         }
@@ -108,7 +128,8 @@ public class CameraActivity extends ActionBarActivity {
 
             //转化为BitMap
             Bitmap bitmapPicture = BitmapFactory.decodeByteArray(data, 0, data.length);
-            Bitmap rotateBitmap = ImageFileUtils.rotateBitmap(bitmapPicture, -90);//将图片逆时针旋转90度
+            //将图片逆时针旋转90度
+            Bitmap rotateBitmap = ImageFileUtils.rotateBitmap(bitmapPicture, -90);
             ivBitMap.setImageBitmap(rotateBitmap);
 
             try {
