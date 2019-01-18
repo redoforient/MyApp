@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -39,17 +40,17 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class HighlightSearchCityActivity extends AppCompatActivity {
-    private static final String TAG = "高亮显示搜索城市";
+    private static final String TAG = "高亮显示搜索时区";
     public static final String KEY_ID = "id"; // value: String
     public static final String KEY_DISPLAYNAME = "name"; // value: String
     private static final String KEY_GMT = "gmt"; // value: String
     private static final String KEY_OFFSET = "offset"; // value: int (Integer)
-    public static final String KEY_CITYINDEX = "cityindex"; // value: int
+    public static final String KEY_INDEX = "index"; // value: int
     private static final String XMLTAG_TIMEZONE = "timezone";
 
     private static final int HOURS_1 = 60 * 60000;
 
-    private EditText input_tv;
+    private EditText mEtInput;
     private ListView listview;
     private TimeZone mTimeZone;
     private ArrayList<HashMap<String, Object>> data;
@@ -59,16 +60,18 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
     static List<HashMap<String, Object>> mData = null;
 
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.world_city_list);
         mTimeZone = TimeZone.getDefault();
         data = (ArrayList<HashMap<String, Object>>) getZones(this);
-        Collections.sort(data, new zoneComparator(KEY_DISPLAYNAME));
+        //按时区名称进行排序
+        Collections.sort(data, new ZoneComparator(KEY_DISPLAYNAME));
         init();
         new UpdateListTask().execute(getKeyWord());
 
-        input_tv.setOnEditorActionListener(new OnEditorActionListener() {
+        mEtInput.setOnEditorActionListener(new OnEditorActionListener() {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -77,7 +80,7 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
             }
         });
 
-        input_tv.addTextChangedListener(new TextWatcher() {
+        mEtInput.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -104,34 +107,56 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //第一种获取列表选项值的方法:通过parent
                 final Map<?, ?> map = (Map<?, ?>) parent.getItemAtPosition(position);
                 String tzId = map.get(KEY_ID).toString();
                 String city = map.get(KEY_DISPLAYNAME).toString();
-                String index = map.get(KEY_CITYINDEX).toString();
+                String gmt = map.get(KEY_GMT).toString();
+                String index = "空";
+                if(map.containsKey(KEY_INDEX)){
+                    index = map.get(KEY_INDEX).toString();
+                }
+                Toast.makeText(HighlightSearchCityActivity.this,
+                        "时区ID:" + tzId + " 时区名称:" + city + " 格林威治时间:" + gmt
+                        +" index:"+index,
+                        Toast.LENGTH_SHORT).show();
                 Log.i(TAG, map.toString());
+
+
+                //第二种获取列表选项值的方法：通过view
+                TextView tvTimeZoneId = (TextView) view.findViewById(R.id.item);
+                TextView tvTimeZoneDesc = (TextView) view.findViewById(R.id.description);
+                String timeZoneItem = tvTimeZoneId.getText().toString();
+                String timeZoneDesc = tvTimeZoneDesc.getText().toString();
+                Toast.makeText(HighlightSearchCityActivity.this, "时区:" + timeZoneItem + " " +
+                                "格林威治时间:" + timeZoneDesc,
+                        Toast.LENGTH_LONG).show();
+
             }
         });
     }
 
+    @Override
     protected void onRestart() {
         new UpdateListTask().execute(getKeyWord());
         super.onRestart();
     }
 
     public void init() {
-        input_tv = (EditText) findViewById(R.id.search_box);
+        mEtInput = (EditText) findViewById(R.id.search_box);
         mHint = (TextView) findViewById(R.id.hint);
         listview = (ListView) findViewById(android.R.id.list);
     }
 
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_DEL:
                 CharSequence str = "";
-                str = input_tv.getText();
+                str = mEtInput.getText();
                 if (str != null && str.length() > 0) {
                     String temp = str.toString();
-                    input_tv.setTextKeepState(temp.substring(0, temp.length()));
+                    mEtInput.setTextKeepState(temp);
                 }
                 break;
             default:
@@ -150,15 +175,15 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
         private int[] to;
         private int layoutid;
         LayoutInflater myInflater;
-        HashMap<String, String> ZoneCityNameGmt;
+        HashMap<String, String> timeZoneCityNameGmt;
 
-        public ArrayList<String> IndexToName(ArrayList<String> beChooseCitys) {
-            ArrayList<String> beChooseNames = new ArrayList<String>();
-            for (int i = 0; i < beChooseCitys.size(); i++) {
-                beChooseNames.add(City.cityNames[Integer.valueOf(beChooseCitys.get(i))]);
-            }
-            return beChooseNames;
-        }
+        //public ArrayList<String> indexToName(ArrayList<String> beChooseCitys) {
+        //    ArrayList<String> beChooseNames = new ArrayList<>();
+        //    for (int i = 0; i < beChooseCitys.size(); i++) {
+        //        beChooseNames.add(City.cityNames[Integer.valueOf(beChooseCitys.get(i))]);
+        //    }
+        //    return beChooseNames;
+        //}
 
         public HighLightKeywordsAdapter(Context context, List<HashMap<String, String>> list,
                                         int layoutid, String[] from, int[] to) {
@@ -169,24 +194,29 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
             this.layoutid = layoutid;
         }
 
+        @Override
         public int getCount() {
             return list.size();
         }
 
+        @Override
         public Object getItem(int position) {
             return list.get(position);
         }
 
+        @Override
         public long getItemId(int position) {
             return position;
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             myInflater = LayoutInflater.from(context);
             try {
-                ZoneCityNameGmt = (HashMap<String, String>) list.get(position);
-                convertView = myInflater.inflate(layoutid, null);
-                convertView.setTag(ZoneCityNameGmt);
+                timeZoneCityNameGmt = list.get(position);
+                //convertView = myInflater.inflate(layoutid, null);//此view加载方式会导致item样式不生效
+                convertView = myInflater.inflate(layoutid, parent, false);
+                convertView.setTag(timeZoneCityNameGmt);
             } catch (Exception e) {
                 Log.e(TAG, "Hight Key Error! ");
             }
@@ -194,27 +224,27 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
             View item = convertView.findViewById(to[0]);
             View description = convertView.findViewById(to[1]);
             if (item instanceof TextView && description instanceof TextView) {
-                TextView item_tv = (TextView) item;
-                String item_value = "";
-                item_value = ZoneCityNameGmt.get(from[0]).toString();
+                TextView TvItem = (TextView) item;
+                String itemValue = "";
+                itemValue = timeZoneCityNameGmt.get(from[0]);
 
-                String input = input_tv.getText().toString();
+                String input = mEtInput.getText().toString();
 
-                String lower_item_value = item_value.toLowerCase();
+                String lowerItemValue = itemValue.toLowerCase();
                 String lower_input_value = input.toLowerCase();
-                if (lower_item_value.contains(lower_input_value)) {
-                    int start = lower_item_value.indexOf(lower_input_value);
-                    SpannableStringBuilder style_string = new SpannableStringBuilder(item_value);
+                if (lowerItemValue.contains(lower_input_value)) {
+                    int start = lowerItemValue.indexOf(lower_input_value);
+                    SpannableStringBuilder style_string = new SpannableStringBuilder(itemValue);
                     style_string.setSpan(new ForegroundColorSpan(Color.RED), start,
                             start + input.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    item_tv.setText(style_string);
+                    TvItem.setText(style_string);
                 }
 
                 TextView description_tv = (TextView) description;
-                String description_value = ZoneCityNameGmt.get(from[1]).toString();
+                String description_value = timeZoneCityNameGmt.get(from[1]).toString();
                 description_tv.setText(description_value);
 
-                String beShowedCity = item_tv.getText().toString();
+                String beShowedCity = TvItem.getText().toString();
                 Log.e(TAG, "显示的时区(城市):" + beShowedCity);
             }
             return convertView;
@@ -223,7 +253,7 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private synchronized List<HashMap<String, String>> updateNumberslist(String input) {
-        List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+        List<HashMap<String, String>> list = new ArrayList<>();
         if (input == null) {
             for (int i = 0; i < data.size(); i++) {
                 HashMap<String, String> zone_info = (HashMap) data.get(i);
@@ -231,17 +261,16 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
             }
         } else {
             for (int i = 0; i < data.size(); i++) {
-                String zoneCityName = data.get(i).get(KEY_DISPLAYNAME)
-                        .toString();
+                String zoneCityName = data.get(i).get(KEY_DISPLAYNAME).toString();
                 String zoneGmt = data.get(i).get(KEY_GMT).toString();
                 String zoneId = data.get(i).get(KEY_ID).toString();
 
                 if (zoneCityName.toLowerCase().contains(input.toLowerCase())) {
-                    HashMap<String, String> zone_info = new HashMap<>();
-                    zone_info.put(KEY_DISPLAYNAME, zoneCityName);
-                    zone_info.put(KEY_GMT, zoneGmt);
-                    zone_info.put(KEY_ID, zoneId);
-                    list.add(zone_info);
+                    HashMap<String, String> zoneInfo = new HashMap<>();
+                    zoneInfo.put(KEY_DISPLAYNAME, zoneCityName);
+                    zoneInfo.put(KEY_GMT, zoneGmt);
+                    zoneInfo.put(KEY_ID, zoneId);
+                    list.add(zoneInfo);
                 }
             }
         }
@@ -250,26 +279,26 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
     }
 
     private String getKeyWord() {
-        if (input_tv.getText() != null && input_tv.getText().length() > 0) {
-            return input_tv.getText().toString();
+        if (mEtInput.getText() != null && mEtInput.getText().length() > 0) {
+            return mEtInput.getText().toString();
         } else {
             return null;
         }
     }
 
     private class UpdateListTask extends AsyncTask<String, Integer, BaseAdapter> {
+        @Override
         protected BaseAdapter doInBackground(String... params) {
 
             BaseAdapter listAdapter = new HighLightKeywordsAdapter(HighlightSearchCityActivity.this,
-                    updateNumberslist(getKeyWord()), R.layout.custom_row, new String[]{
-                    KEY_DISPLAYNAME, KEY_GMT
-            }, new int[]{
-                    R.id.item, R.id.description
-            });
+                    updateNumberslist(getKeyWord()), R.layout.custom_row,
+                    new String[]{KEY_DISPLAYNAME, KEY_GMT},
+                    new int[]{R.id.item, R.id.description});
 
             return listAdapter;
         }
 
+        @Override
         protected void onPostExecute(BaseAdapter result) {
             listview.setAdapter(result);
 
@@ -284,14 +313,15 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
     }
 
     protected static List<HashMap<String, Object>> getZones(Context context) {
-        mData = new ArrayList<HashMap<String, Object>>();
+        mData = new ArrayList<>();
         mCityIndex = 0;
         final long date = Calendar.getInstance().getTimeInMillis();
         try {
             XmlResourceParser xrp = context.getResources().getXml(R.xml.timezones);
             if (xrp != null) {
-                while (xrp.next() != XmlResourceParser.START_TAG)
+                while (xrp.next() != XmlResourceParser.START_TAG){
                     continue;
+                }
                 xrp.next();
                 while (xrp.getEventType() != XmlResourceParser.END_TAG) {
                     while (xrp.getEventType() != XmlResourceParser.START_TAG) {
@@ -322,16 +352,17 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
         return mData;
     }
 
-    private static class zoneComparator implements Comparator<HashMap<?, ?>> {
+    private static class ZoneComparator implements Comparator<HashMap<?, ?>> {
         private String mSortingKey;
         RuleBasedCollator collator;
 
-        public zoneComparator(String sortingKey) {
+        public ZoneComparator(String sortingKey) {
             mSortingKey = sortingKey;
             collator = (RuleBasedCollator) Collator.getInstance(Locale.getDefault());
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
+        @Override
         public int compare(HashMap<?, ?> map1, HashMap<?, ?> map2) {
             Object value1 = map1.get(mSortingKey);
             Object value2 = map2.get(mSortingKey);
@@ -346,10 +377,10 @@ public class HighlightSearchCityActivity extends AppCompatActivity {
 
     private static void addItem(List<HashMap<String, Object>> myData, String id,
                                 String displayName, long date, int cityIndex) {
-        final HashMap<String, Object> map = new HashMap<String, Object>();
+        final HashMap<String, Object> map = new HashMap<>(6);
         map.put(KEY_ID, id);
         map.put(KEY_DISPLAYNAME, displayName);
-        map.put(KEY_CITYINDEX, cityIndex);
+        map.put(KEY_INDEX, cityIndex);
         final TimeZone tz = TimeZone.getTimeZone(id);
         final int offset = tz.getOffset(date);
         final int p = Math.abs(offset);

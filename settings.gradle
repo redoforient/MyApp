@@ -1,1 +1,1 @@
-include ':app', ':mycamera'
+include ':app', ':mycamera',"highlightSearch"

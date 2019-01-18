@@ -12,7 +12,7 @@
         android:id="@+id/item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="23sp"
+        android:textSize="21sp"
         android:textColor="@android:color/black"
         android:paddingLeft="10dip"
         android:paddingRight="10dip" >
@@ -28,12 +28,12 @@
         android:paddingRight="10dip" >
     </TextView>
 
-    <!-- 
+
    <TextView
         android:id="@+id/zoneid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" >
     </TextView>
-     -->
+
 </LinearLayout>
