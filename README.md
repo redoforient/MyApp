@@ -1,6 +1,4 @@
 # MyApp项目模块说明
-我的微信:wx_zhangll
-
 app：自定义进度框
 
 说明：进度对话框透明背景
@@ -35,3 +33,5 @@ mycamera：前置摄像头拍照截取图片
 2、调用前置摄像头图片反了，之后我再解决吧2019.1.18)
 
 ![image](https://github.com/redoforient/MyApp/raw/master/mycamera/mycamera.gif)
+
+get more informaiton,add my wechat code:wx_zhangll
